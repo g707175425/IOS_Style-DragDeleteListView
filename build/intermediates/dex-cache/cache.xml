@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="D:\Android Studio WorkSpace\DragDeleteListView\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\22.0.0\classes.jar"
+        jumboMode="false"
+        revision="22.0.0"
+        sha1="d84409890828e07d344a3b9b1da545dba9897b51">
+        <dex dex="D:\Android Studio WorkSpace\DragDeleteListView\app\build\intermediates\pre-dexed\debug\classes-07fdd1d02167c01277eebb5e4c938ca8368fe9d8.jar" />
+    </item>
+    <item
+        jar="D:\Android\eclipse-java-luna-SR2-win32-x86_64\android-sdk-windows\extras\android\m2repository\com\android\support\support-annotations\22.0.0\support-annotations-22.0.0.jar"
+        jumboMode="false"
+        revision="22.0.0"
+        sha1="685d0b2c590447e85284ed84712cb363ba04eff8">
+        <dex dex="D:\Android Studio WorkSpace\DragDeleteListView\app\build\intermediates\pre-dexed\debug\support-annotations-22.0.0-9535af41ee648dcf68ed77b0af95c8645cacb9fc.jar" />
+    </item>
+    <item
+        jar="D:\Android Studio WorkSpace\DragDeleteListView\app\build\intermediates\exploded-aar\com.android.support\support-v4\22.0.0\libs\internal_impl-22.0.0.jar"
+        jumboMode="false"
+        revision="22.0.0"
+        sha1="b5b92f469d515a13d778900f6d50c03d12f35504">
+        <dex dex="D:\Android Studio WorkSpace\DragDeleteListView\app\build\intermediates\pre-dexed\debug\internal_impl-22.0.0-17b1ad452dae7c27ab0ce9b9dbc53b896a6ce2f1.jar" />
+    </item>
+    <item
+        jar="D:\Android Studio WorkSpace\DragDeleteListView\app\build\intermediates\exploded-aar\com.android.support\support-v4\22.0.0\classes.jar"
+        jumboMode="false"
+        revision="22.0.0"
+        sha1="4e86306289ace4aa0cfec44a05ed2b410d36989d">
+        <dex dex="D:\Android Studio WorkSpace\DragDeleteListView\app\build\intermediates\pre-dexed\debug\classes-32e7237d584865a4978e119b7f2163e1192a29eb.jar" />
+    </item>
+
+</items>
