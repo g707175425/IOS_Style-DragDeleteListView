@@ -13,6 +13,7 @@ import android.view.animation.OvershootInterpolator;
 import android.view.animation.Transformation;
 import android.widget.ListView;
 
+
 /**
  * StrongHope
  * Created by gongyasen on 2015/4/27.
@@ -38,8 +39,17 @@ public class MyDragDeleteListView extends ListView{
     private MyItemRetranslateAnim myItemRetranslateAnim = new MyItemRetranslateAnim();
     private MyItemRemoveAnim myItemRemoveAnim = new MyItemRemoveAnim();
     private MyItemZoomYAnimation myLastItemZoomYAnimation;
+    private int pinnedItemType = -1;
 
-    enum Direction{LEFT,RIGHT};
+    /**
+     * 设置不可拖拽的item类型(这种类型的Item不会响应拖拽)
+     * @param pinnedItemType
+     */
+    public void setPinnedItemType(int pinnedItemType) {
+        this.pinnedItemType = pinnedItemType;
+    }
+
+    public enum Direction{LEFT,RIGHT};
 
     public MyDragDeleteListView(Context context) {
         super(context);
@@ -58,7 +68,7 @@ public class MyDragDeleteListView extends ListView{
 
     private void init() {
         textPaint.setColor(Color.WHITE);
-        textPaint.setTextSize(35);
+        textPaint.setTextSize(UIUtils.dip2px(getContext(),18));
         textPaint.setAntiAlias(true);
         myItemRetranslateAnim.setFillAfter(true);
         myItemRetranslateAnim.setDuration(300);
@@ -68,6 +78,14 @@ public class MyDragDeleteListView extends ListView{
         myItemRemoveAnim.setInterpolator(new OvershootInterpolator());
     }
 
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        int childIndex = currentPosition - getFirstVisiblePosition();
+        if(getChildAt(childIndex) != null && getAdapter().getItemViewType(currentPosition) != pinnedItemType){
+            getParent().requestDisallowInterceptTouchEvent(true);
+        }
+        return super.dispatchTouchEvent(ev);
+    }
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
@@ -80,14 +98,14 @@ public class MyDragDeleteListView extends ListView{
                 startX = ev.getRawX();
                 startY = ev.getRawY();
                 currentPosition = pointToPosition((int) ev.getX(), (int) ev.getY());
-//                System.out.println("当前点击到的item的位置:"+currentPosition);
+//                if(BuildConfig.DEBUG)System.out.println("当前点击到的item的位置:"+currentPosition);
                 break;
             case MotionEvent.ACTION_MOVE:
                 float newX = ev.getRawX();
                 float newY = ev.getRawY();
                 float distanceX = newX - startX;
                 float distanceY = newY - startY;
-                if(Math.abs(distanceX) > Math.abs(distanceY)*2){
+                if(Math.abs(distanceX) > Math.abs(distanceY)*5 && getAdapter().getItemViewType(currentPosition) != pinnedItemType){
                     isDraging = true;
                 }
                 if(isDraging){
@@ -95,25 +113,34 @@ public class MyDragDeleteListView extends ListView{
                     if(childIndex >= 0){
 //                        System.out.println("当前孩子的索引:"+childIndex + ",当前position:"+currentPosition + ",当前第一条可见条目的位置:"+getFirstVisiblePosition());
                         currentChild = getChildAt(childIndex);
+                        if(currentChild == null)return super.onTouchEvent(ev);
                         currentOffset = newX - initX;
+                        currentChild.setPressed(false);
                         invalidate();
 //                        currentChild.layout((int) (currentChild.getLeft() + distanceX), currentChild.getTop(), (int) (currentChild.getRight() + distanceX), currentChild.getBottom());
                     }
                     startX = newX;
                     startY = newY;
+
                     return true;
                 }
                 startX = newX;
                 startY = newY;
                 break;
             case MotionEvent.ACTION_UP:
-                isDraging = false;
                 if(currentOffset != 0 && Math.abs(currentOffset) < getMeasuredWidth()/dragAvailableDistanceRatio){
                     startAnimation(myItemRetranslateAnim);
                 }else if(Math.abs(currentOffset) > getMeasuredWidth()/dragAvailableDistanceRatio){
                     myItemRemoveAnim.setAnimationListener(new MyItemRemovedListener(currentOffset,currentPosition));
                     startAnimation(myItemRemoveAnim);
                 }
+                if(isDraging){//使拖拽时不响应点击
+                    if(currentChild != null)currentChild.setPressed(false);
+                    isDraging = false;
+                    return true;
+                }
+                isDraging = false;
+
                 break;
         }
         return super.onTouchEvent(ev);
@@ -185,7 +212,7 @@ public class MyDragDeleteListView extends ListView{
             //计算文字大小
             textPaint.getTextBounds(leftText, 0,leftText.length(), childRect);
             int x;
-            int y = child.getBottom() - (((child.getBottom() - child.getTop()) - (childRect.bottom - childRect.top))/2);
+            int y = child.getBottom() - (((child.getBottom() - child.getTop()) - (childRect.bottom - childRect.top))/2) - UIUtils.dip2px(getContext(),2);
             if(currentOffset > availableDistance){
                 x = child.getLeft() + (int)availableDistance/2 + (int)(currentOffset - availableDistance);//文字x坐标
                 canvas.drawColor(leftColor);
@@ -198,7 +225,7 @@ public class MyDragDeleteListView extends ListView{
             //计算文字大小
             textPaint.getTextBounds(rightText,0,rightText.length(),childRect);
             int x;
-            int y = child.getBottom() - (((child.getBottom() - child.getTop()) - (childRect.bottom - childRect.top))/2);
+            int y = child.getBottom() - (((child.getBottom() - child.getTop()) - (childRect.bottom - childRect.top))/2) - UIUtils.dip2px(getContext(),2);
 //            System.out.println("x:"+x+",y:"+y);
             if(currentOffset < -availableDistance){
 //                x = child.getRight() - (childRect.right - childRect.left) - UIUtils.dip2px(getContext(), 15);//文字x坐标
@@ -216,13 +243,13 @@ public class MyDragDeleteListView extends ListView{
     /**
      * item的被移除监听器
      */
-    interface OnRemoveListener{
+    public interface OnRemoveListener{
         /**
          * item被移除
          * @param position 当前移除的位置
          * @param direction 移除的方向
          */
-        void onRemoved(int position,Direction direction);
+        void onRemoved(int position, Direction direction);
     }
 
     /**
@@ -335,6 +362,7 @@ public class MyDragDeleteListView extends ListView{
         protected void applyTransformation(float interpolatedTime,Transformation t) {
             int height = (int) ((1-interpolatedTime)*initHeight);
             if(height == 0){
+                cancel();
                 return;
             }
             v.getLayoutParams().height = height;
@@ -344,6 +372,9 @@ public class MyDragDeleteListView extends ListView{
         @Override
         public void cancel() {
             super.cancel();
+            currentChild = null;
+            currentOffset = 0;
+            currentPosition = 0;
             if(v == null)return;
             v.getLayoutParams().height = initHeight;
             v.requestLayout();
