@@ -2,7 +2,7 @@
 ####(仿IOS风格拖拽删除ListView)
 
 ###预览效果:
-	![](https://github.com/g707175425/IOS_Style-DragDeleteListView/blob/master/sample.gif)
+![](https://github.com/g707175425/IOS_Style-DragDeleteListView/blob/master/sample.gif)
 
 ######代码中实现:
 	MyDragDeleteListView view = new MyDragDeleteListView(this);
