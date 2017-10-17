@@ -1,17 +1,17 @@
-#DragdeleteListView 
-####(仿IOS风格拖拽删除ListView)
+# DragdeleteListView 
+#### (仿IOS风格拖拽删除ListView)
 
-###预览效果:
+### 预览效果:
 ![](https://github.com/g707175425/IOS_Style-DragDeleteListView/blob/master/sample.gif)
 
-######代码中实现:
+###### 代码中实现:
 	MyDragDeleteListView view = new MyDragDeleteListView(this);
     setContentView(view);
     BaseAdapter adapter = new BaseAdapter();
     view.setAdapter(adapter);
     view.setOnRemoveListener(new MyRemoveListener());//设置拖拽删除监听器
 	
-#######若想要实现删除后剩余行向删除位置移动的动画,需要在监听器中调用下面的方法,在动画结束的回调中进行adapter.notifydatasetchanged()刷新数据:
+####### 若想要实现删除后剩余行向删除位置移动的动画,需要在监听器中调用下面的方法,在动画结束的回调中进行adapter.notifydatasetchanged()刷新数据:
 
     private class MyRemoveListener implements MyDragDeleteListView.OnRemoveListener {
         @Override
